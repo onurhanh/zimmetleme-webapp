@@ -1,7 +1,9 @@
 📦 Cihaz Zimmetleme Uygulaması
+
 Cihaz Zimmetleme Uygulaması, kurum ve ekip içinde cihaz takibini kolaylaştırmak amacıyla geliştirilmiş kullanıcı dostu bir React uygulamasıdır. Form aracılığıyla cihaz bilgileri girilir, zimmetleme ve isteğe bağlı olarak teslim tarihi belirlenir. Kayıtlar yerel depolama (localStorage) üzerinden saklanarak basit ama etkili bir envanter yönetimi sağlar.
 
 🚀 Özellikler
+
 📋 Cihaz adı, seri numarası ve zimmetlenen kişi gibi temel bilgilerle kayıt oluşturma
 
 📅 Zimmetleme tarihi ve opsiyonel teslim tarihi seçim alanları
@@ -15,6 +17,7 @@ Cihaz Zimmetleme Uygulaması, kurum ve ekip içinde cihaz takibini kolaylaştır
 💨 Açılır dialog penceresinde blur + fade-in animasyonlu kullanıcı arayüzü
 
 🛠️ Kullanılan Teknolojiler
+
 React
 
 ShadCN UI
