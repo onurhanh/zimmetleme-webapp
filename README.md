@@ -28,9 +28,6 @@ date-fns – for date utilities
 
 🔧 Installation
 
-bash
-Kopyala
-Düzenle
 git clone https://github.com/yourusername/device-assignment-app.git
 cd device-assignment-app
 npm install
