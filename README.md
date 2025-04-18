@@ -1,22 +1,22 @@
-📦 Cihaz Zimmetleme Uygulaması
+📦 Device Assignment App
 
-Cihaz Zimmetleme Uygulaması, kurum ve ekip içinde cihaz takibini kolaylaştırmak amacıyla geliştirilmiş kullanıcı dostu bir React uygulamasıdır. Form aracılığıyla cihaz bilgileri girilir, zimmetleme ve isteğe bağlı olarak teslim tarihi belirlenir. Kayıtlar yerel depolama (localStorage) üzerinden saklanarak basit ama etkili bir envanter yönetimi sağlar.
+The Device Assignment App is a user-friendly React application developed to facilitate equipment tracking within teams and organizations. Devices can be registered through a form with details such as device name, serial number, and assignee, along with mandatory assignment and optional return dates. All records are stored in the browser using localStorage, making it a simple yet effective inventory tool.
 
-🚀 Özellikler
+🚀 Features
 
-📋 Cihaz adı, seri numarası ve zimmetlenen kişi gibi temel bilgilerle kayıt oluşturma
+📋 Register devices with name, serial number, and assignee
 
-📅 Zimmetleme tarihi ve opsiyonel teslim tarihi seçim alanları
+📅 Select assignment date and optional return date
 
-⛔ Geçmiş tarihler seçilemez, maksimum 6 ay sonrası seçilebilir
+⛔ Past dates are disabled; dates can be selected up to 6 months in advance
 
-🧠 Kayıtlar localStorage üzerinde saklanır (backend bağımsız)
+🧠 Records are stored using localStorage (no backend required)
 
-✏️ Kayıt güncelleme ve silme işlemleri
+✏️ Edit and delete existing records
 
-💨 Açılır dialog penceresinde blur + fade-in animasyonlu kullanıcı arayüzü
+💨 Clean UI with modal dialogs and fade-in/blur animations
 
-🛠️ Kullanılan Teknolojiler
+🛠️ Built With
 
 React
 
@@ -24,29 +24,34 @@ ShadCN UI
 
 Tailwind CSS
 
-date-fns – tarih işlemleri için
+date-fns – for date utilities
 
-🔧 Kurulum
+🔧 Installation
+
 bash
 Kopyala
 Düzenle
-git clone https://github.com/kullaniciadi/zimmetleme-app.git
-cd zimmetleme-app
+git clone https://github.com/yourusername/device-assignment-app.git
+cd device-assignment-app
 npm install
 npm run dev
 
-🖼️ Ekran Görüntüleri
+🖼️ Screenshots
+
 <img width="1059" alt="Ekran Resmi 2025-04-18 20 54 09" src="https://github.com/user-attachments/assets/744b53a8-34d1-488b-93cf-23cd27b8fe1d" />
 
-📌 Notlar
-Teslim tarihi alanı opsiyoneldir.
+📌 Notes
 
-Form eksiksiz doldurulmadan kayıt yapılamaz.
+The return date field is optional.
 
-Kişi seçimi dropdown üzerinden yapılır.
+All required fields must be filled before saving a record.
 
-🤝 Katkıda Bulun
-Her türlü öneri, geliştirme ya da pull request için katkılarınızı bekliyoruz!
+Users are selected via a dropdown menu.
+
+🤝 Contributing
+
+Suggestions, improvements, and pull requests are always welcome. Feel free to contribute!
+
 
 
 
