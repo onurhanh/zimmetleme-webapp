@@ -16,6 +16,8 @@ The Device Assignment App is a user-friendly React application developed to faci
 
 💨 Clean UI with modal dialogs and fade-in/blur animations
 
+Dark Mode - Light Mode
+
 🛠️ Built With
 
 React
