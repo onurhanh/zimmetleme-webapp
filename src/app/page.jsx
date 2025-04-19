@@ -265,7 +265,7 @@ export default function Home() {
       </div>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="animate-fade-in bg-white/90 backdrop-blur-md transition-all duration-300">
+        <DialogContent className="animate-fade-in  backdrop-blur-md transition-all duration-300">
           <DialogHeader>
             <DialogTitle className="mb-2 ml-1">Cihazı Güncelle</DialogTitle>
           </DialogHeader>
