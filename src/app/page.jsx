@@ -47,13 +47,14 @@ export default function Home() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
-
+  const [errors, setErrors] = useState({ zimmetKisi: "", teslimTarihi: "" });
+  const [isSubmitted, setIsSubmitted] = useState(false);
   useEffect(() => {
     const stored = localStorage.getItem("cihazlar");
     if (stored) setCihazlar(JSON.parse(stored));
 
     const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "dark"){
+    if (storedTheme === "dark") {
       setDarkMode(true);
       document.documentElement.classList.add("dark");
     }
@@ -64,7 +65,7 @@ export default function Home() {
   }, [cihazlar]);
 
   useEffect(() => {
-    if(darkMode){
+    if (darkMode) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
     } else {
@@ -75,9 +76,23 @@ export default function Home() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsSubmitted(true);
+    const newErrors = {};
+    if (!form.zimmetKisi.trim()) {
+      newErrors.zimmetKisi = "Lütfen zimmetlenen kişiyi giriniz.";
+    }
+    if (!form.teslimTarihi) {
+      newErrors.teslimTarihi = "Lütfen teslim tarihini seçiniz.";
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({ zimmetKisi: "", teslimTarihi: "" });
     const yeniCihaz = { ...form, id: crypto.randomUUID() };
     setCihazlar([...cihazlar, yeniCihaz]);
     setForm({ cihazAdi: "", seriNo: "", zimmetTarihi: new Date(), teslimTarihi: null, zimmetKisi: "" });
+    setIsSubmitted(false);
   };
 
   const handleDelete = (id) => {
@@ -97,6 +112,10 @@ export default function Home() {
   };
 
   const handleSaveUpdate = () => {
+    if (!form.zimmetKisi.trim()) {
+      alert("Lütfen zimmetlenen kişiyi giriniz.");
+      return;
+    }
     const updatedList = [...cihazlar];
     updatedList[editIndex] = { ...form, id: updatedList[editIndex].id };
     setCihazlar(updatedList);
@@ -113,13 +132,11 @@ export default function Home() {
     { name: "Teslim Bekleyen", value: cihazlar.filter((c) => !c.teslimTarihi).length },
   ];
 
-
-
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
-      <h1 className="text-2xl font-bold">Cihaz Zimmetleme Uygulaması</h1>
-      <Button variant="outline" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "Açık Tema" : "Koyu Tema"}</Button>
+        <h1 className="text-2xl font-bold">Cihaz Zimmetleme Uygulaması</h1>
+        <Button variant="outline" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "Açık Tema" : "Koyu Tema"}</Button>
       </div>
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         <div>
@@ -131,56 +148,66 @@ export default function Home() {
           <Input value={form.seriNo} onChange={(e) => setForm({ ...form, seriNo: e.target.value })} required />
         </div>
         <div className="grid grid-cols-2 gap-2">
-        <div className="text-sm col-span-1">
-          <Label className="mb-2 ml-1">Zimmet Tarihi</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-full">
-                {form.zimmetTarihi ? format(form.zimmetTarihi, "PPP") : "Tarih Seçin"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={form.zimmetTarihi}
-                onSelect={(date) => {
-                  if (date && !isBefore(date, today) && !isAfter(date, maxDate)) {
-                    setForm({ ...form, zimmetTarihi: date });
-                  }
-                }}
-                disabled={(date) => isBefore(date, today) || isAfter(date, maxDate)}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div className="text-sm col-span-1">
-          <Label className="mb-2 ml-1">Teslim Tarihi</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-full">
-                {form.teslimTarihi ? format(form.teslimTarihi, "PPP") : "Tarih Seçin"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={form.teslimTarihi}
-                onSelect={(date) => {
-                  if (date && !isBefore(date, today) && !isAfter(date, maxDate)) {
-                    setForm({ ...form, teslimTarihi: date });
-                  }
-                }}
-                disabled={(date) => isBefore(date, today) || isAfter(date, maxDate)}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
+          <div className="text-sm col-span-1">
+            <Label className="mb-2 ml-1">Zimmet Tarihi</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  {form.zimmetTarihi ? format(form.zimmetTarihi, "PPP") : "Tarih Seçin"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={form.zimmetTarihi}
+                  onSelect={(date) => {
+                    if (date && !isBefore(date, today) && !isAfter(date, maxDate)) {
+                      setForm({ ...form, zimmetTarihi: date });
+                    }
+                  }}
+                  disabled={(date) => isBefore(date, today) || isAfter(date, maxDate)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div className="text-sm col-span-1">
+            <Label className="mb-2 ml-1">Teslim Tarihi</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  {form.teslimTarihi ? format(form.teslimTarihi, "PPP") : "Tarih Seçin"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={form.teslimTarihi}
+                  onSelect={(date) => {
+                    if (date && !isBefore(date, today) && !isAfter(date, maxDate)) {
+                      setForm({ ...form, teslimTarihi: date });
+                    }
+                  }}
+                  disabled={(date) => isBefore(date, today) || isAfter(date, maxDate)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            {errors.teslimTarihi && (
+            <p className="text-sm text-red-500 mt-1">{errors.teslimTarihi}</p>
+          )}
+          </div>
         </div>
         <div>
           <Label className="mb-2 ml-1">Zimmetlenen Kişi</Label>
-          <Select value={form.zimmetKisi} onValueChange={(value) => setForm({ ...form, zimmetKisi: value })}>
+          <Select
+            onSubmit={handleSubmit}
+            value={form.zimmetKisi}
+            onValueChange={(value) => {
+              setForm({ ...form, zimmetKisi: value });
+              if (value) setErrors({ ...errors, zimmetKisi: "" });
+            }}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Kişi Seçin" />
             </SelectTrigger>
@@ -190,7 +217,11 @@ export default function Home() {
               <SelectItem value="Zeynep Kaya">Zeynep Kaya</SelectItem>
             </SelectContent>
           </Select>
+          {errors.zimmetKisi && (
+            <p className="text-sm text-red-500 mt-1">{errors.zimmetKisi}</p>
+          )}
         </div>
+
         <div className="col-span-2">
           <Button type="submit" className="w-full">
             Cihazı Kaydet
@@ -274,24 +305,22 @@ export default function Home() {
               <Label className="mb-2 ml-1">Teslim Tarihi</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full">
-                    {form.teslimTarihi ? format(form.teslimTarihi, "PPP") : "Tarih Seçin"}
+                  <Button variant="outline" className="w-full justify-start text-left font-normal">
+                    {form.teslimTarihi ? format(form.teslimTarihi, "dd/MM/yyyy") : "Tarih seçin"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
                     selected={form.teslimTarihi}
-                    onSelect={(date) => {
-                      if (date && !isBefore(date, today) && !isAfter(date, maxDate)) {
-                        setForm({ ...form, teslimTarihi: date });
-                      }
-                    }}
+                    onSelect={(date) => setForm({ ...form, teslimTarihi: date })}
                     disabled={(date) => isBefore(date, today) || isAfter(date, maxDate)}
-                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
+              {isSubmitted && errors.teslimTarihi && (
+                <p className="text-sm text-red-500 mt-1">{errors.teslimTarihi}</p>
+              )}
             </div>
             <div>
               <Label className="mb-2 ml-1">Zimmetlenen Kişi</Label>
