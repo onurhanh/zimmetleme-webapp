@@ -40,7 +40,9 @@ npm run dev
 
 🖼️ Screenshots
 
-<img width="1059" alt="Ekran Resmi 2025-04-18 20 54 09" src="https://github.com/user-attachments/assets/744b53a8-34d1-488b-93cf-23cd27b8fe1d" />
+<img width="951" alt="Ekran Resmi 2025-04-19 20 45 50" src="https://github.com/user-attachments/assets/b0602a12-82e8-4572-b700-116df2ee6424" />
+
+<img width="941" alt="Ekran Resmi 2025-04-19 20 45 14" src="https://github.com/user-attachments/assets/cc3f1220-2c07-499d-9671-dd20e19ecf5d" />
 
 📌 Notes
 
