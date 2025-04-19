@@ -39,6 +39,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { format, addMonths, isBefore, isAfter, startOfDay } from "date-fns";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function Home() {
   const [cihazlar, setCihazlar] = useState([]);
@@ -105,6 +106,14 @@ export default function Home() {
 
   const today = startOfDay(new Date());
   const maxDate = addMonths(today, 6);
+
+  const chartData = [
+    { name: "Toplam", value: cihazlar.length },
+    { name: "Teslim Edildi", value: cihazlar.filter((c) => c.teslimTarihi).length },
+    { name: "Teslim Bekleyen", value: cihazlar.filter((c) => !c.teslimTarihi).length },
+  ];
+
+
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -303,6 +312,30 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <div className="grid grid-cols-3 gap-4">
+        <Card>
+          <CardHeader>Toplam Cihaz</CardHeader>
+          <CardContent>{cihazlar.length}</CardContent>
+        </Card>
+        <Card>
+          <CardHeader>Teslim Edilen</CardHeader>
+          <CardContent>{cihazlar.filter((c) => c.teslimTarihi).length}</CardContent>
+        </Card>
+        <Card>
+          <CardHeader>Teslim Bekleyen</CardHeader>
+          <CardContent>{cihazlar.filter((c) => !c.teslimTarihi).length}</CardContent>
+        </Card>
+      </div>
+      <div className="w-full h-64">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData}>
+            <XAxis dataKey="name" />
+            <YAxis allowDecimals={false} />
+            <Tooltip />
+            <Bar dataKey="value" fill="#8884d8" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
