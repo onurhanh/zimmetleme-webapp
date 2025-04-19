@@ -39,21 +39,39 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { format, addMonths, isBefore, isAfter, startOfDay } from "date-fns";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function Home() {
   const [cihazlar, setCihazlar] = useState([]);
   const [form, setForm] = useState({ cihazAdi: "", seriNo: "", zimmetTarihi: new Date(), teslimTarihi: null, zimmetKisi: "" });
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("cihazlar");
     if (stored) setCihazlar(JSON.parse(stored));
+
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark"){
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
+    }
   }, []);
 
   useEffect(() => {
     localStorage.setItem("cihazlar", JSON.stringify(cihazlar));
   }, [cihazlar]);
+
+  useEffect(() => {
+    if(darkMode){
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -89,10 +107,20 @@ export default function Home() {
   const today = startOfDay(new Date());
   const maxDate = addMonths(today, 6);
 
+  const chartData = [
+    { name: "Toplam", value: cihazlar.length },
+    { name: "Teslim Edildi", value: cihazlar.filter((c) => c.teslimTarihi).length },
+    { name: "Teslim Bekleyen", value: cihazlar.filter((c) => !c.teslimTarihi).length },
+  ];
+
+
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <div className="flex justify-between items-center">
       <h1 className="text-2xl font-bold">Cihaz Zimmetleme Uygulaması</h1>
-
+      <Button variant="outline" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "Açık Tema" : "Koyu Tema"}</Button>
+      </div>
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         <div>
           <Label className="mb-2 ml-1">Cihaz Adı</Label>
@@ -102,7 +130,8 @@ export default function Home() {
           <Label className="mb-2 ml-1">Seri No</Label>
           <Input value={form.seriNo} onChange={(e) => setForm({ ...form, seriNo: e.target.value })} required />
         </div>
-        <div>
+        <div className="grid grid-cols-2 gap-2">
+        <div className="text-sm col-span-1">
           <Label className="mb-2 ml-1">Zimmet Tarihi</Label>
           <Popover>
             <PopoverTrigger asChild>
@@ -125,8 +154,8 @@ export default function Home() {
             </PopoverContent>
           </Popover>
         </div>
-        <div>
-          <Label className="mb-2 ml-1">Teslim Tarihi (Opsiyonel)</Label>
+        <div className="text-sm col-span-1">
+          <Label className="mb-2 ml-1">Teslim Tarihi</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-full">
@@ -147,6 +176,7 @@ export default function Home() {
               />
             </PopoverContent>
           </Popover>
+        </div>
         </div>
         <div>
           <Label className="mb-2 ml-1">Zimmetlenen Kişi</Label>
@@ -282,6 +312,30 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <div className="grid grid-cols-3 gap-4">
+        <Card>
+          <CardHeader>Toplam Cihaz</CardHeader>
+          <CardContent>{cihazlar.length}</CardContent>
+        </Card>
+        <Card>
+          <CardHeader>Teslim Edilen</CardHeader>
+          <CardContent>{cihazlar.filter((c) => c.teslimTarihi).length}</CardContent>
+        </Card>
+        <Card>
+          <CardHeader>Teslim Bekleyen</CardHeader>
+          <CardContent>{cihazlar.filter((c) => !c.teslimTarihi).length}</CardContent>
+        </Card>
+      </div>
+      <div className="w-full h-64">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData}>
+            <XAxis dataKey="name" />
+            <YAxis allowDecimals={false} />
+            <Tooltip />
+            <Bar dataKey="value" fill="#8884d8" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
