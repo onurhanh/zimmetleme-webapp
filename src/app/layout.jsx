@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Zimmetleme App",
-  description: "Zimmetleme olustur!.",
+  description: "Zimmetleme olustur.",
 };
 
 export default function RootLayout({ children }) {
