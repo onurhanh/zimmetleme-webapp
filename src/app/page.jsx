@@ -133,12 +133,12 @@ export default function Home() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="max-w-4xl mx-auto md:p-6 space-y-6 p-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Cihaz Zimmetleme Uygulaması</h1>
         <Button variant="outline" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "Açık Tema" : "Koyu Tema"}</Button>
       </div>
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label className="mb-2 ml-1">Cihaz Adı</Label>
           <Input value={form.cihazAdi} onChange={(e) => setForm({ ...form, cihazAdi: e.target.value })} required />
@@ -147,8 +147,8 @@ export default function Home() {
           <Label className="mb-2 ml-1">Seri No</Label>
           <Input value={form.seriNo} onChange={(e) => setForm({ ...form, seriNo: e.target.value })} required />
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="text-sm col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="text-sm md:col-span-1">
             <Label className="mb-2 ml-1">Zimmet Tarihi</Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -171,7 +171,7 @@ export default function Home() {
               </PopoverContent>
             </Popover>
           </div>
-          <div className="text-sm col-span-1">
+          <div className="text-sm md:col-span-1">
             <Label className="mb-2 ml-1">Teslim Tarihi</Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -222,7 +222,7 @@ export default function Home() {
           )}
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-1 md:col-span-2">
           <Button type="submit" className="w-full">
             Cihazı Kaydet
           </Button>
@@ -305,8 +305,8 @@ export default function Home() {
               <Label className="mb-2 ml-1">Teslim Tarihi</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    {form.teslimTarihi ? format(form.teslimTarihi, "dd/MM/yyyy") : "Tarih seçin"}
+                  <Button variant="outline" className="w-full">
+                    {form.teslimTarihi ? format(form.teslimTarihi, "PPP") : "Tarih seçin"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
