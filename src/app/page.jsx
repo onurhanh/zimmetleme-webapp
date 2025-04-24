@@ -133,7 +133,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto md:p-6 space-y-6 p-6">
+    <div className="max-w-4xl mx-auto md:p-8 space-y-6 p-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Cihaz Zimmetleme Uygulaması</h1>
         <Button variant="outline" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "Açık Tema" : "Koyu Tema"}</Button>
