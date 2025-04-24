@@ -1,5 +1,6 @@
 "use client";
 
+import Swal from 'sweetalert2';
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,7 +97,21 @@ export default function Home() {
   };
 
   const handleDelete = (id) => {
-    setCihazlar(cihazlar.filter((cihaz) => cihaz.id !== id));
+    Swal.fire({
+      title: 'Emin misiniz?',
+      text: 'Bu işlemi geri alamazsınız!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Evet, sil',
+      cancelButtonText: 'Vazgeç',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setCihazlar(cihazlar.filter((cihaz) => cihaz.id !== id));
+        Swal.fire('Silindi!', 'Kayıt başarıyla silindi.', 'success');
+      }
+    });
   };
 
   const handleUpdate = (cihaz, index) => {
@@ -194,8 +209,8 @@ export default function Home() {
               </PopoverContent>
             </Popover>
             {errors.teslimTarihi && (
-            <p className="text-sm text-red-500 mt-1">{errors.teslimTarihi}</p>
-          )}
+              <p className="text-sm text-red-500 mt-1">{errors.teslimTarihi}</p>
+            )}
           </div>
         </div>
         <div>
