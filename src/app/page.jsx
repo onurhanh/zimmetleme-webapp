@@ -51,7 +51,6 @@ export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
   const [errors, setErrors] = useState({ zimmetKisi: "", teslimTarihi: "" });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [activeTab, setActiveTab] = useState('teslim-et');
   const [isTeslimEtDialogOpen, setIsTeslimEtDialogOpen] = useState(false);
   const [isTeslimAlDialogOpen, setIsTeslimAlDialogOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState("");
@@ -140,7 +139,6 @@ export default function Home() {
 
   const handleSaveUpdate = () => {
     if (!form.zimmetKisi.trim()) {
-      alert("Lütfen zimmetlenen kişiyi giriniz.");
       return;
     }
     const updatedList = [...cihazlar];
@@ -155,8 +153,8 @@ export default function Home() {
 
   const chartData = [
     { name: "Toplam", value: cihazlar.length },
-    { name: "Teslim Edildi", value: cihazlar.filter((c) => c.teslimTarihi).length },
-    { name: "Teslim Bekleyen", value: cihazlar.filter((c) => !c.teslimTarihi).length },
+    { name: "Teslim Edildi", value: cihazlar.filter((c) => c.teslimTarihi !== null).length },
+    { name: "Teslim Bekleyen", value: cihazlar.filter((c) => c.teslimTarihi === null).length },
   ];
 
   const handleTeslimAl = () => {
@@ -203,22 +201,87 @@ export default function Home() {
       </div>
 
       <div className="flex gap-4 mb-6">
-        <Button 
-          className={`flex-1 ${activeTab === 'teslim-et' ? 'bg-primary text-primary-foreground' : ''}`}
-          onClick={() => setActiveTab('teslim-et')}
+        <Button
+          className="flex-1"
+          onClick={() => setIsTeslimEtDialogOpen(true)}
         >
           Teslim Et
         </Button>
-        <Button 
-          className={`flex-1 ${activeTab === 'teslim-al' ? 'bg-primary text-primary-foreground' : ''}`}
-          onClick={() => setActiveTab('teslim-al')}
+        <Button
+          className="flex-1"
+          onClick={() => setIsTeslimAlDialogOpen(true)}
         >
           Teslim Al
         </Button>
       </div>
 
-      {activeTab === 'teslim-et' && (
-        <>
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-2">Zimmetli Cihazlar</h2>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Cihaz Adı</TableHead>
+              <TableHead>Seri No</TableHead>
+              <TableHead>Zimmet Tarihi</TableHead>
+              <TableHead>Teslim Tarihi</TableHead>
+              <TableHead>Kişi</TableHead>
+              <TableHead>İşlem</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {cihazlar.map((cihaz, index) => (
+              <TableRow key={cihaz.id}>
+                <TableCell>{cihaz.cihazAdi}</TableCell>
+                <TableCell>{cihaz.seriNo}</TableCell>
+                <TableCell>{new Date(cihaz.zimmetTarihi).toLocaleDateString()}</TableCell>
+                <TableCell>{cihaz.teslimTarihi ? new Date(cihaz.teslimTarihi).toLocaleDateString() : "-"}</TableCell>
+                <TableCell>{cihaz.zimmetKisi}</TableCell>
+                <TableCell className="space-x-2">
+                  <Button variant="outline" onClick={() => handleUpdate(cihaz, index)}>
+                    Güncelle
+                  </Button>
+                  <Button variant="destructive" onClick={() => handleDelete(cihaz.id)}>
+                    Sil
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4 mt-8">
+        <Card>
+          <CardHeader>Toplam Cihaz</CardHeader>
+          <CardContent>{cihazlar.length}</CardContent>
+        </Card>
+        <Card>
+          <CardHeader>Teslim Edilen</CardHeader>
+          <CardContent>{cihazlar.filter((c) => c.teslimTarihi !== null).length}</CardContent>
+        </Card>
+        <Card>
+          <CardHeader>Teslim Bekleyen</CardHeader>
+          <CardContent>{cihazlar.filter((c) => c.teslimTarihi === null).length}</CardContent>
+        </Card>
+      </div>
+
+      <div className="w-full h-64 mt-8">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData}>
+            <XAxis dataKey="name" />
+            <YAxis allowDecimals={false} />
+            <Tooltip />
+            <Bar dataKey="value" fill="#8884d8" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+
+      <Dialog open={isTeslimEtDialogOpen} onOpenChange={setIsTeslimEtDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cihaz Teslim Et</DialogTitle>
+          </DialogHeader>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label className="mb-2 ml-1">Cihaz Adı</Label>
@@ -308,151 +371,102 @@ export default function Home() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
 
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-2">Zimmetli Cihazlar</h2>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Cihaz Adı</TableHead>
-                  <TableHead>Seri No</TableHead>
-                  <TableHead>Zimmet Tarihi</TableHead>
-                  <TableHead>Teslim Tarihi</TableHead>
-                  <TableHead>Kişi</TableHead>
-                  <TableHead>İşlem</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {cihazlar.map((cihaz, index) => (
-                  <TableRow key={cihaz.id}>
-                    <TableCell>{cihaz.cihazAdi}</TableCell>
-                    <TableCell>{cihaz.seriNo}</TableCell>
-                    <TableCell>{new Date(cihaz.zimmetTarihi).toLocaleDateString()}</TableCell>
-                    <TableCell>{cihaz.teslimTarihi ? new Date(cihaz.teslimTarihi).toLocaleDateString() : "-"}</TableCell>
-                    <TableCell>{cihaz.zimmetKisi}</TableCell>
-                    <TableCell className="space-x-2">
-                      <Button variant="outline" onClick={() => handleUpdate(cihaz, index)}>
-                        Güncelle
-                      </Button>
-                      <Button variant="destructive" onClick={() => handleDelete(cihaz.id)}>
-                        Sil
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4 mt-8">
-            <Card>
-              <CardHeader>Toplam Cihaz</CardHeader>
-              <CardContent>{cihazlar.length}</CardContent>
-            </Card>
-            <Card>
-              <CardHeader>Teslim Edilen</CardHeader>
-              <CardContent>{cihazlar.filter((c) => c.teslimTarihi).length}</CardContent>
-            </Card>
-            <Card>
-              <CardHeader>Teslim Bekleyen</CardHeader>
-              <CardContent>{cihazlar.filter((c) => !c.teslimTarihi).length}</CardContent>
-            </Card>
-          </div>
-
-          <div className="w-full h-64 mt-8">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#8884d8" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </>
-      )}
-
-      {activeTab === 'teslim-al' && (
-        <div className="grid gap-4">
-          <div>
-            <Label className="mb-2 ml-1">Kişi Seçin</Label>
-            <Select
-              value={selectedPerson}
-              onValueChange={(value) => {
-                setSelectedPerson(value);
-                setSelectedDevice(null);
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Kişi Seçin" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Ahmet Yılmaz">Ahmet Yılmaz</SelectItem>
-                <SelectItem value="Mehmet Can">Mehmet Can</SelectItem>
-                <SelectItem value="Zeynep Kaya">Zeynep Kaya</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {selectedPerson && (
+      <Dialog open={isTeslimAlDialogOpen} onOpenChange={setIsTeslimAlDialogOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Cihaz Teslim Al</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4">
             <div>
-              <Label className="mb-2 ml-1">Cihaz Seçin</Label>
+              <Label className="mb-2 ml-1">Kişi Seçin</Label>
               <Select
-                value={selectedDevice?.id}
+                value={selectedPerson}
                 onValueChange={(value) => {
-                  const device = getPersonDevices(selectedPerson).find(d => d.id === value);
-                  setSelectedDevice(device);
+                  setSelectedPerson(value);
+                  setSelectedDevice(null);
                 }}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Cihaz Seçin" />
+                  <SelectValue placeholder="Kişi Seçin" />
                 </SelectTrigger>
                 <SelectContent>
-                  {getPersonDevices(selectedPerson).map(cihaz => (
-                    <SelectItem key={cihaz.id} value={cihaz.id}>
-                      {cihaz.cihazAdi} - {cihaz.seriNo}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="Ahmet Yılmaz">Ahmet Yılmaz</SelectItem>
+                  <SelectItem value="Mehmet Can">Mehmet Can</SelectItem>
+                  <SelectItem value="Zeynep Kaya">Zeynep Kaya</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-          )}
 
-          {selectedDevice && (
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="hasarDurumu"
-                  checked={teslimAlForm.hasarDurumu}
-                  onCheckedChange={(checked) => setTeslimAlForm({ ...teslimAlForm, hasarDurumu: checked })}
-                />
-                <Label htmlFor="hasarDurumu">Cihaz hasar görmüş mü?</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="eksikParca"
-                  checked={teslimAlForm.eksikParca}
-                  onCheckedChange={(checked) => setTeslimAlForm({ ...teslimAlForm, eksikParca: checked })}
-                />
-                <Label htmlFor="eksikParca">Eksik parça var mı?</Label>
-              </div>
+            {selectedPerson && (
               <div>
-                <Label className="mb-2 ml-1">Notlar</Label>
-                <Input
-                  value={teslimAlForm.notlar}
-                  onChange={(e) => setTeslimAlForm({ ...teslimAlForm, notlar: e.target.value })}
-                  placeholder="Varsa ek notlarınızı giriniz"
-                />
+                <Label className="mb-2 ml-1">Cihaz Seçin</Label>
+                {getPersonDevices(selectedPerson).length > 0 ? (
+                  <Select
+                    value={selectedDevice?.id}
+                    onValueChange={(value) => {
+                      const device = getPersonDevices(selectedPerson).find(d => d.id === value);
+                      setSelectedDevice(device);
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Cihaz Seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getPersonDevices(selectedPerson).map(cihaz => (
+                        <SelectItem key={cihaz.id} value={cihaz.id}>
+                          {cihaz.cihazAdi} - {cihaz.seriNo}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="text-yellow-600 bg-yellow-50 p-3 rounded-md border border-yellow-200">
+                    Bu kişiye ait zimmetli cihaz bulunamadı.
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            )}
 
-          <Button onClick={handleTeslimAl} disabled={!selectedDevice} className="w-full">
-            Teslim Al
-          </Button>
-        </div>
-      )}
+            {selectedDevice && (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="hasarDurumu"
+                    checked={teslimAlForm.hasarDurumu}
+                    onCheckedChange={(checked) => setTeslimAlForm({ ...teslimAlForm, hasarDurumu: checked })}
+                  />
+                  <Label htmlFor="hasarDurumu">Cihaz hasar görmüş mü?</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="eksikParca"
+                    checked={teslimAlForm.eksikParca}
+                    onCheckedChange={(checked) => setTeslimAlForm({ ...teslimAlForm, eksikParca: checked })}
+                  />
+                  <Label htmlFor="eksikParca">Eksik parça var mı?</Label>
+                </div>
+                <div>
+                  <Label className="mb-2 ml-1">Notlar</Label>
+                  <Input
+                    value={teslimAlForm.notlar}
+                    onChange={(e) => setTeslimAlForm({ ...teslimAlForm, notlar: e.target.value })}
+                    placeholder="Varsa ek notlarınızı giriniz"
+                  />
+                </div>
+              </div>
+            )}
 
+            <Button onClick={handleTeslimAl} disabled={!selectedDevice} className="w-full">
+              Teslim Al
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="animate-fade-in backdrop-blur-md transition-all duration-300">
           <DialogHeader>
